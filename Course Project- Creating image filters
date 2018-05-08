@@ -1,0 +1,198 @@
+Link to source code and output: https://codepen.io/hkarthik/pen/vdPOOE
+
+HTML
+
+<script src = "https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js">
+</script>
+<h1> Filter Fun </h1>
+<canvas ID = "can">
+</canvas>
+<h2> Load Image </h2>
+<p>
+  <input type = "file" ID = "finput" multiple = "false" accept = "image/*" onchange = "upload()">
+</p>
+<h2> Choose Filter </h2>
+<p>
+  <input type = "button" value = "Grayscale" onclick = "makeGray()">
+  <input type = "button" value = "Red" onclick = "makeRed()">
+  <input type = "button" value = "Rainbow" onclick = "makeRainbow()">
+</p>
+<p>
+  <input type = "button" value = "Reset Image" onclick = "resetImage()">
+</p>
+
+CSS
+
+body {
+  background-color: lightblue;
+  font-family: arial;
+}
+canvas {
+  height: 200px;
+  margin: 10px;
+  border: 1px solid gray;
+}  
+input {
+  font-size: 10pt;
+}
+
+JS
+
+var image = null;
+var image1 = null;
+var image2 = null;
+var image3 = null;
+var canvas;
+var imgFile;
+function upload() {
+  imgFile = document.getElementById("finput");
+  canvas = document.getElementById("can");
+  image = new SimpleImage(imgFile);
+  image1 = new SimpleImage(imgFile);
+  image2 = new SimpleImage(imgFile);
+  image3 = new SimpleImage(imgFile);
+  image.drawTo(canvas);
+}
+function makeGray() {
+   if(imageIsLoaded(image1)) {
+    filterGray();
+    image1.drawTo(canvas);
+  }
+}
+function filterGray() {
+  for(var pixel of image1.values()) {
+    var avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+    pixel.setRed(avg);
+    pixel.setGreen(avg);
+    pixel.setBlue(avg);
+  }
+}
+function makeRed() {
+  if(imageIsLoaded(image2)) {
+    filterRed();
+    image2.drawTo(canvas);
+}
+}
+function filterRed() {
+  for(var pixel of image2.values()) {
+    var avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue())/3;
+    if(avg < 128) {
+      pixel.setRed(2 * avg);
+      pixel.setGreen(0);
+      pixel.setBlue(0);
+    }
+    else {
+      pixel.setRed(255);
+      pixel.setGreen(2 * avg - 255);
+      pixel.setBlue(2 * avg - 255);
+    }
+  }
+}
+function makeRainbow() {
+  if(imageIsLoaded(image3)) {
+    filterRainbow();
+    image3.drawTo(canvas);
+}
+}
+function filterRainbow() {
+  var height = image3.getHeight();
+  for (var pixel of image3.values()) {
+    var y = pixel.getY();
+    var avg = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3;
+    if (y < height / 7) {
+      //red
+      if (avg < 128) {
+        pixel.setRed(2 * avg);
+        pixel.setGreen(0);
+        pixel.setBlue(0);
+      } else {
+        pixel.setRed(255);
+        pixel.setGreen(2 * avg - 255);
+        pixel.setBlue(2 * avg - 255);
+      }
+    } else if (y < height * 2 / 7) {
+      //orange
+      if (avg < 128) {
+        pixel.setRed(2 * avg);
+        pixel.setGreen(0.8*avg);
+        pixel.setBlue(0);
+      } else {
+        pixel.setRed(255);
+        pixel.setGreen(1.2*avg-51);
+        pixel.setBlue(2 * avg - 255);
+      }
+    } else if (y < height * 3 / 7) {
+      //yellow
+      if (avg < 128) {
+        pixel.setRed(2 * avg);
+        pixel.setGreen(2*avg);
+        pixel.setBlue(0);
+      } else {
+        pixel.setRed(255);
+        pixel.setGreen(255);
+        pixel.setBlue(2 * avg - 255);
+      }
+    } else if (y < height * 4 / 7) {
+      //green
+      if (avg < 128) {
+        pixel.setRed(0);
+        pixel.setGreen(2*avg);
+        pixel.setBlue(0);
+      } else {
+        pixel.setRed(2*avg-255);
+        pixel.setGreen(255);
+        pixel.setBlue(2 * avg - 255);
+      }
+    } else if (y < height * 5 / 7) {
+      //blue
+      if (avg < 128) {
+        pixel.setRed(0);
+        pixel.setGreen(0);
+        pixel.setBlue(2*avg);
+      } else {
+        pixel.setRed(2*avg-255);
+        pixel.setGreen(2 * avg - 255);
+        pixel.setBlue(255);
+      }
+    } else if (y < height * 6 / 7) {
+      //indigo
+      if (avg < 128) {
+        pixel.setRed(.8*avg);
+        pixel.setGreen(0);
+        pixel.setBlue(2*avg);
+      } else {
+        pixel.setRed(1.2*avg-51);
+        pixel.setGreen(2 * avg - 255);
+        pixel.setBlue(255);
+      }
+    } else {
+      //violet
+      if (avg < 128) {
+        pixel.setRed(1.6*avg);
+        pixel.setGreen(0);
+        pixel.setBlue(1.6*avg);
+      } else {
+        pixel.setRed(0.4*avg+153);
+        pixel.setGreen(2 * avg - 255);
+        pixel.setBlue(0.4*avg+153);
+      }
+    }
+  }
+}
+function resetImage() {
+  if (imageIsLoaded(image)) {
+    image.drawTo(canvas);
+    image1 = new SimpleImage(image);
+    image2 = new SimpleImage(image);
+    image3 = new SimpleImage(image);
+  }
+}
+function imageIsLoaded(img) {
+  if (img == null || !img.complete()) {
+    alert("Image not loaded");
+    return false;
+  } 
+  else {
+    return true;
+  }
+}
