@@ -1,4 +1,7 @@
+Link to source code and output: https://codepen.io/hkarthik/pen/YeBqjZ
+
 HTML
+
 <h1> Green Screen Webpage </h1>
 <canvas ID = "fgcan">
 </canvas>
@@ -18,6 +21,7 @@ HTML
 </p>
 
 CSS
+
 canvas {
   height: 200px;
   margin: 10px;
@@ -29,6 +33,7 @@ h1 {
 }
 
 JS
+
 var fgImage = null;
 var bgImage = null;
 var greenThreshold = 240;
