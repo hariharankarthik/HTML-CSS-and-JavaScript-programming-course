@@ -1,0 +1,85 @@
+HTML
+<h1> Green Screen Webpage </h1>
+<canvas ID = "fgcan">
+</canvas>
+<canvas ID = "bgcan">
+</canvas>
+<script src = "https://www.dukelearntoprogram.com/course1/common/js/image/SimpleImage.js">
+</script>
+<p>
+  Foreground: <input type = "file" ID = "fgfile" multiple = "false" accept = "image/*" onchange = "loadForegroundImage()">
+</p>
+<p>
+  Background: <input type = "file" ID = "bgfile" multiple = "false" accept = "image/*" onchange = "loadBackgroundImage()">
+</p>
+<p>
+  <input type = "button" value = "Create Composite" onclick = "doGreenScreen()">
+  <input type = "button" value = "Clear Canvases" onclick = "clearCanvas()">
+</p>
+
+CSS
+canvas {
+  height: 200px;
+  margin: 10px;
+  border: 1px solid #c3c3c3;
+}
+h1 {
+  font-family: Arial;
+  color: blue;
+}
+
+JS
+var fgImage = null;
+var bgImage = null;
+var greenThreshold = 240;
+var canvas1;
+var canvas2;
+function loadForegroundImage() {
+ var imgFile1 = document.getElementById("fgfile");
+  fgImage = new SimpleImage(imgFile1);
+  canvas1 = document.getElementById("fgcan");
+  fgImage.drawTo(canvas1);
+}
+function loadBackgroundImage() {
+  var imgFile2 = document.getElementById("bgfile");
+  bgImage = new SimpleImage(imgFile2);
+  canvas2 = document.getElementById("bgcan");
+  bgImage.drawTo(canvas2);
+}
+function createComposite() {
+  var output = new SimpleImage(fgImage.getWidth(),fgImage.getHeight());
+  for (var pixel of fgImage.values()) {
+    var x = pixel.getX();
+    var y = pixel.getY();
+    if (pixel.getGreen() > greenThreshold) {
+      var bgPixel = bgImage.getPixel(x,y);
+      output.setPixel(x, y, bgPixel);
+    }
+    else {
+      output.setPixel(x, y, pixel);
+    }
+  }
+  return output;
+}
+function doGreenScreen() {
+  if(fgImage == null || !fgImage.complete()) {
+    alert("foreground not loaded");
+    return;
+  }
+   if(bgImage == null || !bgImage.complete()) {
+     alert("background not loaded");
+   }
+      clearCanvas();
+
+  var finalImage = createComposite();
+  finalImage.drawTo(canvas1);
+}
+function clearCanvas() {
+  doClear(canvas1);
+  doClear(canvas2);
+}
+
+function doClear(canvas) {
+  var context = canvas.getContext("2d");
+  context.clearRect(0,0,canvas.width,canvas.height);
+}
